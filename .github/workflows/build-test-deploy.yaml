@@ -108,16 +108,16 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+      # - name: Setup .NET Core
+      #   uses: actions/setup-dotnet@v3
+      #   with:
+      #     dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Deploy to Azure Function App
         uses: azure/webapps-deploy@v3
         with:
           app-name: app-net8-dev
-          package: ${{ env.PUBLISH_PROJECT_PATH }}
+          package: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
 
       - name: Log out of Azure
         run: az logout
