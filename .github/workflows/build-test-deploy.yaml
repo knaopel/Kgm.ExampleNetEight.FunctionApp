@@ -60,7 +60,6 @@ jobs:
           --logger trx
           --logger console
           --collect:"XPlat Code Coverage"
-          --settings ${{ env.TEST_COVERAGE_SETTINGS_FILE_PATH }}
           ${{ env.SOLUTION_PATH }}
 
       - name: Publish
