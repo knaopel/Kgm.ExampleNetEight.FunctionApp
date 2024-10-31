@@ -13,6 +13,10 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 concurrency:
   group: build-deploy-${{ github.ref }}
   cancel-in-progress: true
