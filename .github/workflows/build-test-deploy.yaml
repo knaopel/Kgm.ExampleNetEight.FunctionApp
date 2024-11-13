@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  AZURE_WEBAPP_NAME: app-net8-dev
+  AZURE_WEBAPP_NAME: app-net8-win
   AZURE_FUNCTION_APP_PACKAGE_FOLDER: function-app-package # --------------------------------------------------- the folder in which to store the function app package
   BUILD_CONFIGURATION: Release # ------------------------------------------------------------------------------ the build configuration to use
   DOTNET_VERSION: 8.0.x # ------------------------------------------------------------------------------------- the .net version to use
@@ -116,19 +116,19 @@ jobs:
       # - name: List files after download
         # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win/lib
       
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          # creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # - name: Login to Azure
+      #   uses: azure/login@v2
+      #   with:
+      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      #     # creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure Function App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          # publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
           package: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
 
       # - name: Log out of Azure
