@@ -73,7 +73,7 @@ jobs:
           dotnet publish
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --no-build
-          --property:PublishDir='${{ env.PUBLISH_OUTPUT_FOLDER }}'
+          --property:PublishDir='../../${{ env.PUBLISH_OUTPUT_FOLDER }}'
           ${{ env.PUBLISH_PROJECT_PATH }}
 
       - name: List published files
