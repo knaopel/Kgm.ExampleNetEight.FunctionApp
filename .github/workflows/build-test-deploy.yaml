@@ -109,7 +109,13 @@ jobs:
 
       - name: List files after download
         run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
-
+      - name: List files after download
+        run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes
+      - name: List files after download
+        run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win
+      - name: List files after download
+        run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
