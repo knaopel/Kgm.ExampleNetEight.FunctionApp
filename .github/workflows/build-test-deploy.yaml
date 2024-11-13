@@ -91,8 +91,8 @@ jobs:
           path: ${{ env.PUBLISH_OUTPUT_FOLDER }}
           if-no-files-found: error
 
-      # - name: Directory listing
-      #   run: ls
+      - name: Directory listing
+        run: ls
 
   deploy:
     name: Deploy the Function App to the environment
