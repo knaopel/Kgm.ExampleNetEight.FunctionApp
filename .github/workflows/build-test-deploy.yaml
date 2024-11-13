@@ -26,7 +26,7 @@ env:
   AZURE_FUNCTION_APP_PACKAGE_FOLDER: function-app-package # --------------------------------------------------- the folder in which to store the function app package
   BUILD_CONFIGURATION: Release # ------------------------------------------------------------------------------ the build configuration to use
   DOTNET_VERSION: 8.0.x # ------------------------------------------------------------------------------------- the .net version to use
-  PUBLISH_OUTPUT_FOLDER: ./publish-output # --------------------------------------------------------------------- the folder in which to store the publish output
+  PUBLISH_OUTPUT_FOLDER: publish-output # --------------------------------------------------------------------- the folder in which to store the publish output
   PUBLISH_ARTIFACT_NAME: published-function-app
   PUBLISH_PROJECT_PATH: ./src/Kgm.ExampleNetEight.FunctionApp/Kgm.ExampleNetEight.FunctionApp.csproj # -------- the path to the project to publish
   SOLUTION_PATH: ./Kgm.ExampleNetEight.FunctionApp.sln # ------------------------------------------------------ the path to the solution *.sln file
@@ -74,11 +74,12 @@ jobs:
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --no-build
           --property:PublishDir='${{ env.PUBLISH_OUTPUT_FOLDER }}'
-          --verbosity d
           ${{ env.PUBLISH_PROJECT_PATH }}
 
       - name: List published files
-        run: ls ${{ env.PUBLISH_OUTPUT_FOLDER }}
+        run: |
+          ls
+          ls ${{ env.PUBLISH_OUTPUT_FOLDER }}
 
       - name: Archive published function app
         uses: actions/upload-artifact@v4
