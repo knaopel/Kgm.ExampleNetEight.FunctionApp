@@ -22,6 +22,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  AZURE_WEBAPP_NAME: app-net8-dev
   AZURE_FUNCTION_APP_PACKAGE_FOLDER: function-app-package # --------------------------------------------------- the folder in which to store the function app package
   BUILD_CONFIGURATION: Release # ------------------------------------------------------------------------------ the build configuration to use
   DOTNET_VERSION: 8.0.x # ------------------------------------------------------------------------------------- the .net version to use
@@ -72,8 +73,12 @@ jobs:
           dotnet publish
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --no-build
-          --output ${{ env.PUBLISH_OUTPUT_FOLDER }}
+          --property:PublishDir='${{ env.PUBLISH_OUTPUT_FOLDER }}'
+          --verbosity d
           ${{ env.PUBLISH_PROJECT_PATH }}
+
+      - name: List published files
+        run: ls ${{ env.PUBLISH_OUTPUT_FOLDER }}
 
       - name: Archive published function app
         uses: actions/upload-artifact@v4
@@ -88,7 +93,7 @@ jobs:
   deploy:
     name: Deploy the Function App to the environment
     if: ${{ github.event_name == 'push' }}
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build-and-test
     environment: ${{ github.ref_name == 'master' && 'production' || github.ref_name == 'staging' && 'stage' || 'development' }}
     steps:
@@ -102,7 +107,7 @@ jobs:
         run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
 
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           # client-id: ${{ secrets.AZURE_CLIENT_ID }}
           # tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -112,7 +117,7 @@ jobs:
       - name: Deploy to Azure Function App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: app-net8-dev
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           package: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
 
       - name: Log out of Azure
