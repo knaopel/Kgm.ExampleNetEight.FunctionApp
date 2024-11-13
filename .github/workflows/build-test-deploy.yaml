@@ -76,11 +76,14 @@ jobs:
           --property:PublishDir='../../${{ env.PUBLISH_OUTPUT_FOLDER }}'
           ${{ env.PUBLISH_PROJECT_PATH }}
 
-      - name: List published files
+      - name: List root files
         run: |
           ls
-          ls ${{ env.PUBLISH_OUTPUT_FOLDER }}
 
+      - name: List published files
+        run: |
+            ls ${{ env.PUBLISH_OUTPUT_FOLDER }}
+      
       - name: Archive published function app
         uses: actions/upload-artifact@v4
         with:
@@ -88,8 +91,8 @@ jobs:
           path: ${{ env.PUBLISH_OUTPUT_FOLDER }}
           if-no-files-found: error
 
-      - name: Directory listing
-        run: ls
+      # - name: Directory listing
+      #   run: ls
 
   deploy:
     name: Deploy the Function App to the environment
