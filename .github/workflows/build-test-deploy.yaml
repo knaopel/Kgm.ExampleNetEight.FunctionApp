@@ -107,14 +107,14 @@ jobs:
           name: ${{ env.PUBLISH_ARTIFACT_NAME }}
           path: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
 
-      - name: List files after download
-        run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
-      - name: List files after download
-        run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes
-      - name: List files after download
-        run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win
-      - name: List files after download
-        run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win/lib
+      # - name: List files after download
+        # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
+      # - name: List files after download
+        # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes
+      # - name: List files after download
+        # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win
+      # - name: List files after download
+        # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win/lib
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -125,7 +125,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure Function App
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
