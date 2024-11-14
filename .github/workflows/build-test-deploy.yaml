@@ -61,12 +61,21 @@ jobs:
           dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
           popd
 
+      - name: List Files after build
+        run: |
+          ls
+
       - name: Test
         shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           dotnet test --configuration ${{ env.BUILD_CONFIGURATION }} --no-build --results-directory ${{ env.TEST_RESULTS_FOLDER }} --logger trx --logger console --collect:"XPlat Code Coverage"
           popd
+
+      - name: List Files after Test
+        run: |
+          ls
+          ls ${{ env.TEST_RESULTS_FOLDER }}
 
       - name: Resolve Project Dependencies Using DotNet
         shell: bash
