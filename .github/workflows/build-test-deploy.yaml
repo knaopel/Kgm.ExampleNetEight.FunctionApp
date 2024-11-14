@@ -90,16 +90,12 @@ jobs:
         run: |
           ls ./${{ env.PUBLISH_PROJECT_FOLDER }}/${{ env.PUBLISH_OUTPUT_FOLDER}}
 
-  #     - name: List published files
-  #       run: |
-  #           ls ${{ env.PUBLISH_OUTPUT_FOLDER }}
-      
-  #     - name: Archive published function app
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: ${{ env.PUBLISH_ARTIFACT_NAME }}
-  #         path: ${{ env.PUBLISH_OUTPUT_FOLDER }}
-  #         if-no-files-found: error
+      - name: Archive published function app
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PUBLISH_ARTIFACT_NAME }}
+          path: ./${{ env.PUBLISH_PROJECT_FOLDER }}/${{ env.PUBLISH_OUTPUT_FOLDER}}
+          if-no-files-found: error
 
   # #     - name: Directory listing
   # #       run: ls
