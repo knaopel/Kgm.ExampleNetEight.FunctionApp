@@ -41,95 +41,95 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET ${{ env.DOTNET_VERSION }}
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+  #     - name: Setup .NET ${{ env.DOTNET_VERSION }}
+  #       uses: actions/setup-dotnet@v4
+  #       with:
+  #         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Install dependencies
-        run: dotnet restore ${{ env.SOLUTION_PATH }}
+  #     - name: Install dependencies
+  #       run: dotnet restore ${{ env.SOLUTION_PATH }}
 
-      - name: Build
-        run: >
-          dotnet build
-          --configuration ${{ env.BUILD_CONFIGURATION }}
-          --no-restore
-          ${{ env.SOLUTION_PATH }}
+  #     - name: Build
+  #       run: >
+  #         dotnet build
+  #         --configuration ${{ env.BUILD_CONFIGURATION }}
+  #         --no-restore
+  #         ${{ env.SOLUTION_PATH }}
 
-      - name: Test
-        run: >
-          dotnet test
-          --configuration ${{ env.BUILD_CONFIGURATION }}
-          --no-build
-          --verbosity normal
-          --results-directory ${{ env.TEST_RESULTS_FOLDER }}
-          --logger trx
-          --logger console
-          --collect:"XPlat Code Coverage"
-          ${{ env.SOLUTION_PATH }}
+  #     - name: Test
+  #       run: >
+  #         dotnet test
+  #         --configuration ${{ env.BUILD_CONFIGURATION }}
+  #         --no-build
+  #         --verbosity normal
+  #         --results-directory ${{ env.TEST_RESULTS_FOLDER }}
+  #         --logger trx
+  #         --logger console
+  #         --collect:"XPlat Code Coverage"
+  #         ${{ env.SOLUTION_PATH }}
 
-      - name: Publish
-        run: >
-          dotnet publish
-          --configuration ${{ env.BUILD_CONFIGURATION }}
-          --no-build
-          --property:PublishDir='../../${{ env.PUBLISH_OUTPUT_FOLDER }}'
-          ${{ env.PUBLISH_PROJECT_PATH }}
+  #     - name: Publish
+  #       run: >
+  #         dotnet publish
+  #         --configuration ${{ env.BUILD_CONFIGURATION }}
+  #         --no-build
+  #         --property:PublishDir='../../${{ env.PUBLISH_OUTPUT_FOLDER }}'
+  #         ${{ env.PUBLISH_PROJECT_PATH }}
 
-      - name: List root files
-        run: |
-          ls
+  #     - name: List root files
+  #       run: |
+  #         ls
 
-      - name: List published files
-        run: |
-            ls ${{ env.PUBLISH_OUTPUT_FOLDER }}
+  #     - name: List published files
+  #       run: |
+  #           ls ${{ env.PUBLISH_OUTPUT_FOLDER }}
       
-      - name: Archive published function app
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.PUBLISH_ARTIFACT_NAME }}
-          path: ${{ env.PUBLISH_OUTPUT_FOLDER }}
-          if-no-files-found: error
+  #     - name: Archive published function app
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: ${{ env.PUBLISH_ARTIFACT_NAME }}
+  #         path: ${{ env.PUBLISH_OUTPUT_FOLDER }}
+  #         if-no-files-found: error
 
-      - name: Directory listing
-        run: ls
+  #     - name: Directory listing
+  #       run: ls
 
-  deploy:
-    name: Deploy the Function App to the environment
-    if: ${{ github.event_name == 'push' }}
-    runs-on: windows-latest
-    needs: build-and-test
-    environment: ${{ github.ref_name == 'master' && 'production' || github.ref_name == 'staging' && 'stage' || 'development' }}
-    steps:
-      - name: Download the published function app
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.PUBLISH_ARTIFACT_NAME }}
-          path: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
+  # deploy:
+  #   name: Deploy the Function App to the environment
+  #   if: ${{ github.event_name == 'push' }}
+  #   runs-on: windows-latest
+  #   needs: build-and-test
+  #   environment: ${{ github.ref_name == 'master' && 'production' || github.ref_name == 'staging' && 'stage' || 'development' }}
+  #   steps:
+  #     - name: Download the published function app
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: ${{ env.PUBLISH_ARTIFACT_NAME }}
+  #         path: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
 
-      # - name: List files after download
-        # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
-      # - name: List files after download
-        # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes
-      # - name: List files after download
-        # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win
-      # - name: List files after download
-        # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win/lib
+  #     # - name: List files after download
+  #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
+  #     # - name: List files after download
+  #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes
+  #     # - name: List files after download
+  #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win
+  #     # - name: List files after download
+  #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win/lib
       
-      # - name: Login to Azure
-      #   uses: azure/login@v2
-      #   with:
-      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
-      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      #     # creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #     # - name: Login to Azure
+  #     #   uses: azure/login@v2
+  #     #   with:
+  #     #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #     #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #     #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  #     #     # creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Function App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
+  #     - name: Deploy to Azure Function App
+  #       uses: azure/webapps-deploy@v3
+  #       with:
+  #         app-name: ${{ env.AZURE_WEBAPP_NAME }}
+  #         publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+  #         package: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
 
-      # - name: Log out of Azure
-      #   run: az logout
+  #     # - name: Log out of Azure
+  #     #   run: az logout

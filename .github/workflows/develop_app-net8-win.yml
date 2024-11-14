@@ -1,0 +1,47 @@
+name: Build and deploy .NET core project to Azure Function App - Windows
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
+  DOTNET_VERSION: 8.0.x
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Checkout Github Action
+        uses: actions/checkout@v4
+
+      - name: Setup Dotnet ${{ env.DOTNET_VERSION }} Environment
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Resolve Project Dependencies Using DotNet
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          dotnet build --configuration Release --output ./output
+          popd
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: 'f7838b11-c5b2-4e67-8671-f11255c391ea'
+          tenant-id: '833a9480-bdcd-4d3d-9f4e-d0a7d9814209'
+          subscription-id: '92c40ca0-a6b2-4b4d-a328-6d63fc4533ee'
+
+      - name: Run Azure Functions Action
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: app-net8-win
+          slot-name: Production
+          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
