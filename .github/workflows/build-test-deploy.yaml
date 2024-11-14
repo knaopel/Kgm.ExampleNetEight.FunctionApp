@@ -22,11 +22,12 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  AZURE_WEBAPP_NAME: app-net8-win
+  AZURE_WEBAPP_NAME: app-net8-dev
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
   AZURE_FUNCTION_APP_PACKAGE_FOLDER: function-app-package # --------------------------------------------------- the folder in which to store the function app package
   BUILD_CONFIGURATION: Release # ------------------------------------------------------------------------------ the build configuration to use
   DOTNET_VERSION: 8.0.x # ------------------------------------------------------------------------------------- the .net version to use
-  PUBLISH_OUTPUT_FOLDER: publish-output # --------------------------------------------------------------------- the folder in which to store the publish output
+  PUBLISH_OUTPUT_FOLDER: ./output # --------------------------------------------------------------------- the folder in which to store the publish output
   PUBLISH_ARTIFACT_NAME: published-function-app
   PUBLISH_PROJECT_PATH: ./src/Kgm.ExampleNetEight.FunctionApp/Kgm.ExampleNetEight.FunctionApp.csproj # -------- the path to the project to publish
   SOLUTION_PATH: ./Kgm.ExampleNetEight.FunctionApp.sln # ------------------------------------------------------ the path to the solution *.sln file
@@ -41,10 +42,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-  #     - name: Setup .NET ${{ env.DOTNET_VERSION }}
-  #       uses: actions/setup-dotnet@v4
-  #       with:
-  #         dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
   #     - name: Install dependencies
   #       run: dotnet restore ${{ env.SOLUTION_PATH }}
@@ -69,16 +70,15 @@ jobs:
   #         ${{ env.SOLUTION_PATH }}
 
   #     - name: Publish
-  #       run: >
-  #         dotnet publish
-  #         --configuration ${{ env.BUILD_CONFIGURATION }}
-  #         --no-build
-  #         --property:PublishDir='../../${{ env.PUBLISH_OUTPUT_FOLDER }}'
-  #         ${{ env.PUBLISH_PROJECT_PATH }}
-
-  #     - name: List root files
+  #       shell: bash
   #       run: |
-  #         ls
+  #         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+  #         dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --output ${{ env.PUBLISH_OUTPUT_FOLDER }}
+  #         popd
+
+  # #     - name: List root files
+  # #       run: |
+  # #         ls
 
   #     - name: List published files
   #       run: |
@@ -91,8 +91,8 @@ jobs:
   #         path: ${{ env.PUBLISH_OUTPUT_FOLDER }}
   #         if-no-files-found: error
 
-  #     - name: Directory listing
-  #       run: ls
+  # #     - name: Directory listing
+  # #       run: ls
 
   # deploy:
   #   name: Deploy the Function App to the environment
@@ -116,13 +116,20 @@ jobs:
   #     # - name: List files after download
   #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win/lib
       
-  #     # - name: Login to Azure
-  #     #   uses: azure/login@v2
-  #     #   with:
-  #     #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #     #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #     #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  #     #     # creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: 'ffa0e881-27c8-41f6-9ccd-7d632847a53d'
+          tenant-id: '833a9480-bdcd-4d3d-9f4e-d0a7d9814209'
+          subscription-id: '92c40ca0-a6b2-4b4d-a328-6d63fc4533ee'
+          # creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Run Azure Functions Action
+        uses: azure/functions-action@v1
+        id: fa
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH}}/${{ env.PUBLISH_OUTPUT_FOLDER }}'
 
   #     - name: Deploy to Azure Function App
   #       uses: azure/webapps-deploy@v3
