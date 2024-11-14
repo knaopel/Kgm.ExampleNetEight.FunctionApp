@@ -29,6 +29,7 @@ env:
   DOTNET_VERSION: 8.0.x # ------------------------------------------------------------------------------------- the .net version to use
   PUBLISH_OUTPUT_FOLDER: ./output # --------------------------------------------------------------------- the folder in which to store the publish output
   PUBLISH_ARTIFACT_NAME: published-function-app
+  PUBLISH_PROJECT_FOLDER: src/Kgm.ExampleNetEight.FunctionApp # ----------------------------------------------- the path to the folder that contains the project
   PUBLISH_PROJECT_PATH: ./src/Kgm.ExampleNetEight.FunctionApp/Kgm.ExampleNetEight.FunctionApp.csproj # -------- the path to the project to publish
   SOLUTION_PATH: ./Kgm.ExampleNetEight.FunctionApp.sln # ------------------------------------------------------ the path to the solution *.sln file
   TEST_RESULTS_FOLDER: test-results # ------------------------------------------------------------------------- the folder in which to store the test results
@@ -77,17 +78,17 @@ jobs:
           ls
           ls ${{ env.TEST_RESULTS_FOLDER }}
 
-      - name: Resolve Project Dependencies Using DotNet
+      - name: Publish Function App
         shell: bash
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pushd './${{ env.PUBLISH_PROJECT_FOLDER }}'
           dotnet publish --configuration ${{ env.BUILD_CONFIGURATION }} --no-build --output ./output
           popd
 
-      - name: List root files
+      - name: List published files
         shell: bash
         run: |
-          ls ./output
+          ls ./${{ env.PUBLISH_PROJECT_FOLDER }}/output
 
   #     - name: List published files
   #       run: |
