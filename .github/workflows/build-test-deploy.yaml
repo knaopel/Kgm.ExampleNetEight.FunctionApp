@@ -61,28 +61,24 @@ jobs:
           dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
           popd
 
-  #     - name: Test
-  #       run: >
-  #         dotnet test
-  #         --configuration ${{ env.BUILD_CONFIGURATION }}
-  #         --no-build
-  #         --verbosity normal
-  #         --results-directory ${{ env.TEST_RESULTS_FOLDER }}
-  #         --logger trx
-  #         --logger console
-  #         --collect:"XPlat Code Coverage"
-  #         ${{ env.SOLUTION_PATH }}
+      - name: Test
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          dotnet test --configuration ${{ env.BUILD_CONFIGURATION }} --no-build --results-directory ${{ env.TEST_RESULTS_FOLDER }} --logger trx --logger console --collect:"XPlat Code Coverage"
+          popd
 
       - name: Resolve Project Dependencies Using DotNet
         shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --output ./output
+          dotnet publish --configuration ${{ env.BUILD_CONFIGURATION }} --no-build --output ./output
           popd
 
-  # #     - name: List root files
-  # #       run: |
-  # #         ls
+      - name: List root files
+        shell: bash
+        run: |
+          ls ./output
 
   #     - name: List published files
   #       run: |
