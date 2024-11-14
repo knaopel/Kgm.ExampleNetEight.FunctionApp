@@ -69,12 +69,12 @@ jobs:
   #         --collect:"XPlat Code Coverage"
   #         ${{ env.SOLUTION_PATH }}
 
-  #     - name: Publish
-  #       shell: bash
-  #       run: |
-  #         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-  #         dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --output ${{ env.PUBLISH_OUTPUT_FOLDER }}
-  #         popd
+      - name: Resolve Project Dependencies Using DotNet
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --output ./output
+          popd
 
   # #     - name: List root files
   # #       run: |
