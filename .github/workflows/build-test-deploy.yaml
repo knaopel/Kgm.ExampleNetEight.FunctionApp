@@ -139,7 +139,7 @@ jobs:
         id: fa
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH}}/${{ env.PUBLISH_OUTPUT_FOLDER }}'
+          package: '${{ env.PUBLISH_PROJECT_FOLDER}}/output'
 
   #     - name: Deploy to Azure Function App
   #       uses: azure/webapps-deploy@v3
