@@ -127,4 +127,4 @@ jobs:
         id: fa
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: ${{ env.PUBLISH_PROJECT_FOLDER}}/${{ env.PUBLISH_OUTPUT_FOLDER }}
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH}}
