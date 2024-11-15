@@ -100,22 +100,24 @@ jobs:
   # #     - name: Directory listing
   # #       run: ls
 
-  # deploy:
-  #   name: Deploy the Function App to the environment
-  #   if: ${{ github.event_name == 'push' }}
-  #   runs-on: windows-latest
-  #   needs: build-and-test
-  #   environment: ${{ github.ref_name == 'master' && 'production' || github.ref_name == 'staging' && 'stage' || 'development' }}
-  #   steps:
-  #     - name: Download the published function app
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: ${{ env.PUBLISH_ARTIFACT_NAME }}
-  #         path: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
+  deploy:
+    name: Deploy the Function App to the environment
+    if: ${{ github.event_name == 'push' }}
+    runs-on: windows-latest
+    needs: build-and-test
+    environment: ${{ github.ref_name == 'master' && 'production' || github.ref_name == 'staging' && 'stage' || 'development' }}
+    steps:
+      - name: Download the published function app
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.PUBLISH_ARTIFACT_NAME }}
+          path: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
 
-  #     # - name: List files after download
-  #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
-  #     # - name: List files after download
+      - name: List root files after download
+        run: ls
+      - name: List package folder files after download
+        run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
+      #     # - name: List files after download
   #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes
   #     # - name: List files after download
   #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win
@@ -130,12 +132,12 @@ jobs:
           subscription-id: '92c40ca0-a6b2-4b4d-a328-6d63fc4533ee'
           # creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Run Azure Functions Action
-        uses: azure/functions-action@v1
-        id: fa
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: ${{ env.PUBLISH_PROJECT_FOLDER}}/${{ env.PUBLISH_OUTPUT_FOLDER }}
+      # - name: Run Azure Functions Action
+      #   uses: azure/functions-action@v1
+      #   id: fa
+      #   with:
+      #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
+      #     package: ${{ env.PUBLISH_PROJECT_FOLDER}}/${{ env.PUBLISH_OUTPUT_FOLDER }}
 
   #     - name: Deploy to Azure Function App
   #       uses: azure/webapps-deploy@v3
