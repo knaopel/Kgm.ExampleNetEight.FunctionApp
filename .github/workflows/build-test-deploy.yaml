@@ -30,8 +30,8 @@ env:
   PUBLISH_ARTIFACT_NAME: published-function-app
   PUBLISH_PROJECT_FOLDER: src/Kgm.ExampleNetEight.FunctionApp # ----------------------------------------------- the path to the folder that contains the project
   PUBLISH_OUTPUT_FOLDER: published-output # ------------------------------------------------------------------- the folder in which to store the publish output
-  PUBLISH_PROJECT_PATH: ./src/Kgm.ExampleNetEight.FunctionApp/Kgm.ExampleNetEight.FunctionApp.csproj # -------- the path to the project to publish
-  SOLUTION_PATH: ./Kgm.ExampleNetEight.FunctionApp.sln # ------------------------------------------------------ the path to the solution *.sln file
+  # PUBLISH_PROJECT_PATH: ./src/Kgm.ExampleNetEight.FunctionApp/Kgm.ExampleNetEight.FunctionApp.csproj # -------- the path to the project to publish
+  # SOLUTION_PATH: ./Kgm.ExampleNetEight.FunctionApp.sln # ------------------------------------------------------ the path to the solution *.sln file
   TEST_RESULTS_FOLDER: test-results # ------------------------------------------------------------------------- the folder in which to store the test results
   TEST_COVERAGE_SETTINGS_FILE_PATH: ./test/unit-tests/coverlet.runsettings # ---------------------------------- the path to the code coverage settings file
 
@@ -97,9 +97,6 @@ jobs:
           path: ./${{ env.PUBLISH_PROJECT_FOLDER }}/${{ env.PUBLISH_OUTPUT_FOLDER}}
           if-no-files-found: error
 
-  # #     - name: Directory listing
-  # #       run: ls
-
   deploy:
     name: Deploy the Function App to the environment
     if: ${{ github.event_name == 'push' }}
@@ -117,12 +114,6 @@ jobs:
         run: ls
       - name: List package folder files after download
         run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
-      #     # - name: List files after download
-  #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes
-  #     # - name: List files after download
-  #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win
-  #     # - name: List files after download
-  #       # run: ls ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}/runtimes/win/lib
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -130,21 +121,10 @@ jobs:
           client-id: 'ffa0e881-27c8-41f6-9ccd-7d632847a53d'
           tenant-id: '833a9480-bdcd-4d3d-9f4e-d0a7d9814209'
           subscription-id: '92c40ca0-a6b2-4b4d-a328-6d63fc4533ee'
-          # creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # - name: Run Azure Functions Action
-      #   uses: azure/functions-action@v1
-      #   id: fa
-      #   with:
-      #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
-      #     package: ${{ env.PUBLISH_PROJECT_FOLDER}}/${{ env.PUBLISH_OUTPUT_FOLDER }}
-
-  #     - name: Deploy to Azure Function App
-  #       uses: azure/webapps-deploy@v3
-  #       with:
-  #         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-  #         publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-  #         package: ${{ env.AZURE_FUNCTION_APP_PACKAGE_FOLDER }}
-
-  #     # - name: Log out of Azure
-  #     #   run: az logout
+      - name: Run Azure Functions Action
+        uses: azure/functions-action@v1
+        id: fa
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: ${{ env.PUBLISH_PROJECT_FOLDER}}/${{ env.PUBLISH_OUTPUT_FOLDER }}
